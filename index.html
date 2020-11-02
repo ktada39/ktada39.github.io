@@ -2,12 +2,28 @@
 	<head>
 		<meta charset="utf-8">
 		<title>カメラ２台検証</title>
+		<script>
+			window.onload = function () {
+				var queryString = window.location.search;
+				var queryObject = new Object();
+				if(queryString){
+					queryString = queryString.substring(1);
+					var parameters = queryString.split('&');
+					
+					for (var i = 0; i < parameters.length; i++) {
+						var element = parameters[i].split('=');
+						var paramName = decodeURIComponent(element[0]);
+				    		queryObject[paramName] = "./recvonly.html?roomId=" + decodeURIComponent(element[1]);
+					}
+				}
+				document.getElementById("camera1").src = queryObject["id1"];
+				document.getElementById("camera2").src = queryObject["id2"];
+			}
+		</script>
 	</head>
 	<body>
 		<h4>カメラ２台検証</h4>
-		<iframe width="400" height="300" title="camera1" src="./recvonly.html">
-		</iframe>
-		<iframe width="400" height="300" title="camera2" src="./recvonly.html">
-		</iframe>
+		<iframe id="camera1" width="400" height="300"></iframe>
+		<iframe id="camera2" width="400" height="300"></iframe>
 	</body>
 </html>
