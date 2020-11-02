@@ -45,6 +45,7 @@
         const startConn = async () => {
           options.video.codec = videoCodec;
           conn = Ayame.connection(signalingUrl, roomId, options, true);
+          console.log("fromIframe >> RoomId = " + roomId);
           await conn.connect(null);
           conn.on('open', ({authzMetadata}) => console.log(authzMetadata));
           conn.on('disconnect', (e) => {
