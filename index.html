@@ -13,17 +13,29 @@
 					for (var i = 0; i < parameters.length; i++) {
 						var element = parameters[i].split('=');
 						var paramName = decodeURIComponent(element[0]);
-				    		queryObject[paramName] = "./recvonly.html?roomId=" + decodeURIComponent(element[1]);
+							queryObject[paramName] = "./recvonly.html?roomId=" + decodeURIComponent(element[1]);
+							document.getElementById(paramName).src = queryObject[paramName];
 					}
 				}
-				document.getElementById("camera1").src = queryObject["id1"];
-				document.getElementById("camera2").src = queryObject["id2"];
 			}
 		</script>
+				<style>
+					iframe{
+						margin: 0px;
+						width: 49%;
+						height: 90%;
+						border: 0;
+						background-color: black;
+					}
+					body{
+						padding: 0;
+						display: inline;	
+					}
+				</style>
 	</head>
 	<body>
 		<h4>カメラ２台検証</h4>
-		<iframe id="camera1" width="400" height="300"></iframe>
-		<iframe id="camera2" width="400" height="300"></iframe>
+		<iframe id="camera1"></iframe>
+		<iframe id="camera2"></iframe>
 	</body>
 </html>
