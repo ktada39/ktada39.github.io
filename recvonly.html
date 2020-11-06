@@ -16,13 +16,16 @@
         <button onclick="startConn();">接続</button>
         <button onclick="disconnect();">切断</button>
       </div> -->
-      <div style="float:left;">
-        <video id="remote-video" autoplay playsinline controls muted></video>
+      <div id="videoContainer" style="float:left;">
+        <!-- <video id="remote-video" autoplay playsinline controls muted></video> -->
       </div>
       <script src="https://cdn.jsdelivr.net/npm/@open-ayame/ayame-web-sdk@2020.3.0/dist/ayame.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.7.0/qs.min.js"></script>
       <script src="./main.js"></script>
       <script type="text/javascript">
+        let connected = false;
+        let isStarted = false;
+
         const options = Ayame.defaultOptions;
         options.clientId = clientId ? clientId : options.clientId;
         if (signalingKey) {
@@ -30,7 +33,7 @@
         }
         options.video.direction = 'recvonly';
         options.audio.direction = 'recvonly';
-        const remoteVideo = document.querySelector('#remote-video');
+        let remoteVideo = null;
         let conn;
         const disconnect = () => {
           if (conn) {
@@ -41,13 +44,19 @@
           options.video.codec = videoCodec;
           conn = Ayame.connection(signalingUrl, roomId, options, true);
           console.log("fromIframe >> RoomId = " + roomId);
-          await conn.connect(null);
-          conn.on('open', ({authzMetadata}) => console.log(authzMetadata));
+          conn.connect(null);
+          conn.on('connect', (e) => {
+            connected = true;
+          });
+
           conn.on('disconnect', (e) => {
             console.log(e);
             remoteVideo.srcObject = null;
+            window.location.reload(1);
           });
+
           conn.on('addstream', (e) => {
+            createVideoIfNotExistent();
             remoteVideo.srcObject = e.stream;
           });
         };
@@ -56,6 +65,44 @@
 
         window.onload = function(){
           startConn();
+          //checkAndReconnect();
+          //consoleLog();
+          start();
+        }
+
+        const sleep = ms => new Promise(resolve =>
+          setTimeout(resolve, ms)
+        );
+
+        const start = async () => {
+          if(!isStarted){
+            doWorkAsync();
+          }
+          isStarted = true;
+        }
+
+        async function doWorkAsync(){
+          while (true) {
+            await sleep(2000);
+            if(!connected){
+              console.log("retrying to connect");
+              window.location.reload(1);
+            }
+          }
+        }
+
+        function createVideoIfNotExistent(){
+            if (remoteVideo == null){
+              var video = document.createElement("video");
+            video.style.visibility = "visible";
+            video.id = "remote-video";
+            video.autoplay = "true";
+            video.controls = "true";
+            video.muted = "true";
+            
+            document.getElementById("videoContainer").appendChild(video);
+            remoteVideo = document.querySelector('#remote-video');
+            }
         }
       </script>
       <style>
@@ -66,6 +113,7 @@
           margin: 0;
           width: 100%;
           height: 100%;
+          visibility: hidden;
         }
 
         body{
