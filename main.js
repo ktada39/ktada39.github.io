@@ -11,6 +11,7 @@ function onChangeVideoCodec() {
     videoCodec = null;
   }
 }
+
 // query string から roomId, clientId を取得するヘルパー
 function parseQueryString() {
   const qs = window.Qs;
@@ -24,6 +25,9 @@ function parseQueryString() {
     }
     if (params.signalingKey) {
       signalingKey = params.signalingKey;
+    }
+    if (params.videoCodec) {
+      videoCodec = params.videoCodec;
     }
   }
 }
